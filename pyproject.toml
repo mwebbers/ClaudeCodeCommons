@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-code-commons"
+version = "0.1.0"
+description = "Vendor-agnostic, standard-library-only helpers (env lookup, tolerant parsing, currency symbols, remote-path builder, run log) shared by Claude routine repos"
+# Standard library only — a broad floor so it installs in any routine runtime,
+# including a Python 3.11 scheduled-task sandbox. Verified on 3.9 and 3.12.
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+# A single top-level module, `code_commons`, living under src/. Installing this
+# package makes `from code_commons import env_required, parse_num, ...` work in
+# the consuming routines and vendor toolkits.
+[tool.setuptools]
+py-modules = ["code_commons"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+    "feature: link a test to a SCOPE.md feature ID, e.g. feature('F-001')",
+]
