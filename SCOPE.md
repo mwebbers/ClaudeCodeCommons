@@ -30,14 +30,15 @@ their vendor-specific parts.
 Each feature is testable. The ID in brackets is referenced by tests via
 `@pytest.mark.feature("F-00X")`.
 
-- **[F-001] Environment helpers with project-prefix fallback.** `env_required(key,
-  *, prefix="")` and `env_opt(key, default, *, prefix="")` — with `env_get` as a
-  convenience alias of `env_opt` — resolve a variable by trying `<prefix>_<key>`
-  first and falling back to the unprefixed `<key>` (plain `<key>` with no prefix,
-  backward compatible). `env_required` aborts with a clear `SystemExit` naming the
-  variable when neither form is set; `env_opt`/`env_get` return `default`. This
-  lets a family of routines share one environment: shared values set once
-  unprefixed, per-routine values set prefixed so they never collide.
+- **[F-001] Environment helpers with project prefix.** `env_required(key, *,
+  prefix="", shared=False)` and `env_opt(key, default, *, prefix="", shared=False)`
+  — with `env_get` as a convenience alias of `env_opt` — resolve a variable using
+  the project-prefix convention. With **no prefix** it is a plain `<key>` lookup
+  (backward compatible). With a prefix and `shared=True` it tries `<prefix>_<key>`
+  first and falls back to the unprefixed `<key>` (for family-shared
+  credentials/infra). With a prefix and `shared=False` (default) it reads **only**
+  `<prefix>_<key>` — see F-007. `env_required` aborts with a clear `SystemExit`
+  naming the variable when it is not set; `env_opt`/`env_get` return `default`.
 
 - **[F-002] Tolerant number parsing.** `parse_num()` accepts comma **thousands**
   separators (`"1,234"` → `1234.0`), plain numbers and numeric strings, and
@@ -63,14 +64,26 @@ Each feature is testable. The ID in brackets is referenced by tests via
   line to stdout — the shared run-log format the routines use.
 
 - **[F-006] Numeric environment helpers with clear errors.** `env_int(key,
-  default=None, *, prefix="")` and `env_float(key, default=None, *, prefix="")`
-  resolve a variable via the same project-prefix-with-fallback lookup as `env_opt`,
+  default=None, *, prefix="", shared=False)` and `env_float(key, default=None, *,
+  prefix="", shared=False)` resolve a variable via the same project-prefix lookup
+  (incl. the `shared` flag, F-001/F-007) as `env_opt`,
   return `default` when unset, and parse the value as an `int`/`float`. When the
   value is **set but malformed**, they abort with a clear `SystemExit` naming the
   variable (`Invalid <KEY>='<value>': expected an integer.` / `… a number.`)
   instead of raising an uncaught `ValueError` mid-run — so a typo in a numeric knob
   fails a routine's `--dry-run` config validation cleanly. Replaces the per-routine
   `_int`/`_float` helpers the WooCommerce family each carried (review Step 9).
+
+- **[F-007] Prefix-required routine-own keys with a migration warning.** With a
+  prefix set and `shared=False` (the default), the `env_*` helpers read **only**
+  `<prefix>_<key>`; the unprefixed form is not read, so a routine-own knob set
+  unprefixed in an environment shared with sibling routines cannot leak between
+  them. `shared=True` restores the unprefixed fallback for family-shared
+  credentials/infra (e.g. `WC_*`, `DROPBOX_*`). When a prefix-required lookup misses
+  but the unprefixed form **is** set, the helpers emit a one-time (`per (prefix,
+  key)` per process) `WARNING:` to **stderr** naming both forms — telling the
+  operator the stray value is being ignored and to rename it. The numeric helpers
+  (F-006) honour the same flag and warning.
 
 ## Out of scope
 

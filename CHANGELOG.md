@@ -8,6 +8,27 @@ adheres to semantic versioning.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-01
+
+### Changed
+- **[F-001]** — **BREAKING (behaviour).** The env helpers (`env_required`,
+  `env_opt`/`env_get`, `env_int`, `env_float`) gain a `shared: bool = False`
+  keyword. With a prefix set, the unprefixed fallback now applies **only** when
+  `shared=True`; with `shared=False` (the new default) a prefixed lookup reads
+  **only** `<prefix>_<key>`. The no-prefix (standalone) path is unchanged. Mark
+  family-shared credentials/infra (`WC_*`, `DROPBOX_*`) with `shared=True`;
+  routine-own knobs stay prefix-only so they cannot leak between sibling routines
+  sharing one environment. Consumers roll forward by bumping the pin and marking
+  their shared keys.
+
+### Added
+- **[F-007]** Prefix-required routine-own keys with a one-time migration warning.
+  When a prefix-required lookup (`shared=False`) misses but the unprefixed form
+  **is** set, the helpers emit a one-time `WARNING:` to stderr naming both forms
+  (the stray value is ignored), so an old-style unprefixed value surfaces loudly
+  instead of silently reverting to the default. The numeric helpers (F-006) honour
+  the same flag and warning.
+
 ## [0.2.0] - 2026-06-01
 
 ### Added
