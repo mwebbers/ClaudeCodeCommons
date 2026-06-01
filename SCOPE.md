@@ -62,6 +62,16 @@ Each feature is testable. The ID in brackets is referenced by tests via
 - **[F-005] Timestamped run log.** `log(msg)` prints a flushed `[HH:MM:SS] msg`
   line to stdout — the shared run-log format the routines use.
 
+- **[F-006] Numeric environment helpers with clear errors.** `env_int(key,
+  default=None, *, prefix="")` and `env_float(key, default=None, *, prefix="")`
+  resolve a variable via the same project-prefix-with-fallback lookup as `env_opt`,
+  return `default` when unset, and parse the value as an `int`/`float`. When the
+  value is **set but malformed**, they abort with a clear `SystemExit` naming the
+  variable (`Invalid <KEY>='<value>': expected an integer.` / `… a number.`)
+  instead of raising an uncaught `ValueError` mid-run — so a typo in a numeric knob
+  fails a routine's `--dry-run` config validation cleanly. Replaces the per-routine
+  `_int`/`_float` helpers the WooCommerce family each carried (review Step 9).
+
 ## Out of scope
 
 Anything vendor-specific (a WooCommerce/Shopify/… client, shop meta keys);

@@ -68,6 +68,56 @@ def test_env_required_missing_names_both_forms(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# F-006 Numeric environment helpers with clear errors
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.feature("F-006")
+def test_env_int_float_parse_with_default_and_prefix(monkeypatch):
+    for k in ("PAGES", "STOCK_PAGES", "RATE", "STOCK_RATE"):
+        monkeypatch.delenv(k, raising=False)
+    # Unset → default returned as-is (an int/float, not re-parsed); no default → None.
+    assert C.env_int("PAGES", 50, prefix="STOCK") == 50
+    assert C.env_float("RATE", 1.5, prefix="STOCK") == 1.5
+    assert C.env_int("PAGES") is None
+    assert C.env_float("RATE") is None
+    # Set & valid: parsed; the prefixed form wins over the unprefixed fallback.
+    monkeypatch.setenv("PAGES", "10")
+    monkeypatch.setenv("STOCK_PAGES", "200")
+    assert C.env_int("PAGES", 50, prefix="STOCK") == 200
+    monkeypatch.delenv("STOCK_PAGES", raising=False)
+    assert C.env_int("PAGES", 50, prefix="STOCK") == 10
+    monkeypatch.setenv("RATE", "2.5")
+    assert C.env_float("RATE", 1.0) == 2.5
+
+
+@pytest.mark.feature("F-006")
+def test_env_int_malformed_aborts_naming_the_variable(monkeypatch):
+    monkeypatch.setenv("PAGES", "abc")
+    with pytest.raises(SystemExit) as exc:
+        C.env_int("PAGES")
+    msg = str(exc.value)
+    assert "PAGES" in msg and "abc" in msg and "integer" in msg
+
+
+@pytest.mark.feature("F-006")
+def test_env_int_rejects_a_non_integer_number(monkeypatch):
+    # "10.5" is a valid float but not an int — env_int must reject it, not truncate.
+    monkeypatch.setenv("PAGES", "10.5")
+    with pytest.raises(SystemExit):
+        C.env_int("PAGES")
+
+
+@pytest.mark.feature("F-006")
+def test_env_float_malformed_aborts_naming_the_variable(monkeypatch):
+    monkeypatch.setenv("RATE", "x")
+    with pytest.raises(SystemExit) as exc:
+        C.env_float("RATE")
+    msg = str(exc.value)
+    assert "RATE" in msg and "number" in msg
+
+
+# ---------------------------------------------------------------------------
 # F-002 Tolerant number parsing
 # ---------------------------------------------------------------------------
 

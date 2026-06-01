@@ -67,6 +67,37 @@ def env_opt(key: str, default: str | None = None, *, prefix: str = "") -> str | 
 env_get = env_opt
 
 
+def env_int(key: str, default: int | None = None, *, prefix: str = "") -> int | None:
+    """Optional env var parsed as an ``int``, via the project-prefix-with-fallback
+    lookup. Returns ``default`` when neither form is set.
+
+    When the value **is** set but is not a valid integer, this aborts with a clear
+    ``SystemExit`` naming the variable (``Invalid <KEY>='<value>': expected an
+    integer.``) instead of raising an uncaught ``ValueError`` mid-run — so a typo in
+    a numeric knob fails a routine's ``--dry-run`` config check cleanly. ``default``
+    is returned as-is and never re-parsed (F-006)."""
+    raw = _env_lookup(key, prefix)
+    if raw is None:
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        raise SystemExit(f"Invalid {key}={raw!r}: expected an integer.")
+
+
+def env_float(key: str, default: float | None = None, *, prefix: str = "") -> float | None:
+    """Optional env var parsed as a ``float`` (see :func:`env_int`). Returns
+    ``default`` when unset; aborts with a clear ``SystemExit`` naming the variable
+    (``Invalid <KEY>='<value>': expected a number.``) when set but malformed (F-006)."""
+    raw = _env_lookup(key, prefix)
+    if raw is None:
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        raise SystemExit(f"Invalid {key}={raw!r}: expected a number.")
+
+
 # ---------------------------------------------------------------------------
 # Tolerant numeric parsing
 # ---------------------------------------------------------------------------

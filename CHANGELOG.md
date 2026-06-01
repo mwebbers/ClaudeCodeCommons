@@ -8,6 +8,18 @@ adheres to semantic versioning.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-01
+
+### Added
+- **[F-006]** `env_int(key, default=None, *, prefix="")` and `env_float(...)` —
+  numeric env helpers using the same project-prefix-with-fallback lookup as
+  `env_opt`, returning `default` when unset and aborting with a clear `SystemExit`
+  naming the variable (`Invalid <KEY>='<value>': expected an integer.` /
+  `… a number.`) when the value is set but malformed, instead of an uncaught
+  `ValueError`. Folds the per-routine `_int`/`_float` helpers the WooCommerce
+  family each carried into the shared core (review Step 9). Additive — existing
+  names unchanged.
+
 ## [0.1.0] - 2026-05-31
 
 Initial release: the vendor-agnostic, standard-library-only core, extracted from

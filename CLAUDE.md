@@ -6,9 +6,9 @@ Context for Claude Code in this repo. Keep this short — it loads on every sess
 
 `claude-code-commons` is a **library**, not a routine. It holds the small,
 vendor-agnostic, **standard-library-only** helpers shared by Claude routine
-repos: `env_required`/`env_opt`/`env_get`, `parse_num`, `currency_symbol`,
-`build_remote_path`, `log`. It has **no vendor or report logic and no third-party
-dependency**.
+repos: `env_required`/`env_opt`/`env_get`, `env_int`/`env_float`, `parse_num`,
+`currency_symbol`, `build_remote_path`, `log`. It has **no vendor or report logic
+and no third-party dependency**.
 
 There is no scheduled-task/operator section here — this package does not run on
 its own. It is consumed by the routine repos and by vendor toolkits (e.g.
