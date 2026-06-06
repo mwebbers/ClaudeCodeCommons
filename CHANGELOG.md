@@ -8,6 +8,11 @@ adheres to semantic versioning.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-06
+
+First stable release — the public surface is considered stable; this is the v1.0
+milestone for the Claude routine family.
+
 ### Added
 - Self-contained trunk-on-main `CONTRIBUTING.md`, `LICENSE` (MIT) + `license`
   field, `.github/workflows/release.yml` (tag -> GitHub Release) and
