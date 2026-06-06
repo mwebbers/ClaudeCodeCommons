@@ -45,3 +45,9 @@ pytest
 
 A coverage test (`tests/test_scope_coverage.py`) fails if any `SCOPE.md` feature
 lacks a test or a test references a feature not in `SCOPE.md`.
+
+## Contributing
+
+Branching is **trunk-on-main**, and releases go through a strict
+version = changelog = tag gate. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full
+procedure and the `ruff` + `pytest` quality gates.

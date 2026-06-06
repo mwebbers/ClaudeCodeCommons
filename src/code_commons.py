@@ -21,7 +21,6 @@ import sys
 from datetime import datetime
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Environment: project prefix with shared fallback
 # ---------------------------------------------------------------------------
@@ -182,11 +181,23 @@ def log(msg: str) -> None:
 # Known currency code -> display symbol. Codes not in the table fall back to the
 # 3-letter code itself, which is always valid in Excel number formats.
 CURRENCY_SYMBOLS = {
-    "EUR": "€", "USD": "$", "GBP": "£", "CHF": "CHF",
-    "DKK": "kr", "SEK": "kr", "NOK": "kr", "ISK": "kr",
-    "JPY": "¥", "CNY": "¥",
-    "CAD": "$", "AUD": "$", "NZD": "$", "HKD": "$",
-    "PLN": "zł", "CZK": "Kč", "HUF": "Ft",
+    "EUR": "€",
+    "USD": "$",
+    "GBP": "£",
+    "CHF": "CHF",
+    "DKK": "kr",
+    "SEK": "kr",
+    "NOK": "kr",
+    "ISK": "kr",
+    "JPY": "¥",
+    "CNY": "¥",
+    "CAD": "$",
+    "AUD": "$",
+    "NZD": "$",
+    "HKD": "$",
+    "PLN": "zł",
+    "CZK": "Kč",
+    "HUF": "Ft",
 }
 
 

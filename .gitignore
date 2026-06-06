@@ -7,8 +7,12 @@ venv/
 build/
 dist/
 .DS_Store
+.coverage
+.coverage.*
+htmlcov/
 
 # Secrets and local runtime config — never commit.
 .env
 .env.*
 !.env.example
+.ruff_cache/

@@ -7,7 +7,6 @@ import pytest
 
 import code_commons as C
 
-
 # ---------------------------------------------------------------------------
 # F-001 Environment helpers
 # ---------------------------------------------------------------------------
@@ -16,7 +15,7 @@ import code_commons as C
 @pytest.mark.feature("F-001")
 def test_env_required_present_and_missing(monkeypatch):
     monkeypatch.setenv("THING", "  value  ")
-    assert C.env_required("THING") == "value"          # stripped
+    assert C.env_required("THING") == "value"  # stripped
     monkeypatch.delenv("THING", raising=False)
     with pytest.raises(SystemExit) as exc:
         C.env_required("THING")
@@ -52,9 +51,9 @@ def test_env_get_is_env_opt_alias(monkeypatch):
         monkeypatch.delenv(k, raising=False)
     assert C.env_get("KNOB", "def", prefix="STOCK", shared=True) == "def"
     monkeypatch.setenv("KNOB", "5")
-    assert C.env_get("KNOB", prefix="STOCK", shared=True) == "5"   # unprefixed fallback
+    assert C.env_get("KNOB", prefix="STOCK", shared=True) == "5"  # unprefixed fallback
     monkeypatch.setenv("STOCK_KNOB", "9")
-    assert C.env_get("KNOB", prefix="STOCK", shared=True) == "9"   # prefixed wins
+    assert C.env_get("KNOB", prefix="STOCK", shared=True) == "9"  # prefixed wins
     assert C.env_get is C.env_opt
 
 
@@ -138,9 +137,9 @@ def test_prefix_required_ignores_plain_form(monkeypatch, reset_warned):
     for k in ("KNOB", "STOCK_KNOB"):
         monkeypatch.delenv(k, raising=False)
     monkeypatch.setenv("KNOB", "plain")
-    assert C.env_opt("KNOB", "def", prefix="STOCK") == "def"   # plain ignored
+    assert C.env_opt("KNOB", "def", prefix="STOCK") == "def"  # plain ignored
     with pytest.raises(SystemExit):
-        C.env_required("KNOB", prefix="STOCK")                  # plain ignored
+        C.env_required("KNOB", prefix="STOCK")  # plain ignored
 
 
 @pytest.mark.feature("F-007")
@@ -197,7 +196,7 @@ def test_env_int_prefix_required_and_warns(monkeypatch, capsys, reset_warned):
     for k in ("PAGES", "STOCK_PAGES"):
         monkeypatch.delenv(k, raising=False)
     monkeypatch.setenv("PAGES", "999")
-    assert C.env_int("PAGES", 50, prefix="STOCK") == 50    # plain ignored → default
+    assert C.env_int("PAGES", 50, prefix="STOCK") == 50  # plain ignored → default
     assert "STOCK_PAGES" in capsys.readouterr().err
 
 
@@ -207,10 +206,19 @@ def test_env_int_prefix_required_and_warns(monkeypatch, capsys, reset_warned):
 
 
 @pytest.mark.feature("F-002")
-@pytest.mark.parametrize("raw,expected", [
-    ("1,234", 1234.0), ("1,234.56", 1234.56), ("12.5", 12.5), (None, 0.0),
-    ("", 0.0), ("garbage", 0.0), (7, 7.0), ([], 0.0),
-])
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("1,234", 1234.0),
+        ("1,234.56", 1234.56),
+        ("12.5", 12.5),
+        (None, 0.0),
+        ("", 0.0),
+        ("garbage", 0.0),
+        (7, 7.0),
+        ([], 0.0),
+    ],
+)
 def test_parse_num(raw, expected):
     assert C.parse_num(raw) == expected
 
@@ -219,7 +227,7 @@ def test_parse_num(raw, expected):
 def test_parse_num_comma_is_thousands_not_decimal():
     # Documented contract: a comma is a THOUSANDS separator (dot-decimal domain),
     # so comma-decimal locale input is intentionally out of scope.
-    assert C.parse_num("1,5") == 15.0   # NOT 1.5
+    assert C.parse_num("1,5") == 15.0  # NOT 1.5
 
 
 # ---------------------------------------------------------------------------
@@ -228,16 +236,19 @@ def test_parse_num_comma_is_thousands_not_decimal():
 
 
 @pytest.mark.feature("F-003")
-@pytest.mark.parametrize("base,folder,expected", [
-    ("/Reports", "Stock", "/Reports/Stock/r.xlsx"),
-    ("/Reports/", "Stock", "/Reports/Stock/r.xlsx"),    # trailing slash on base
-    ("/Reports", "", "/Reports/r.xlsx"),                # empty folder -> into base
-    ("/Reports", None, "/Reports/r.xlsx"),              # unset folder -> into base
-    (None, "Stock", "/Stock/r.xlsx"),                   # no base -> folder at root
-    ("", "", "/r.xlsx"),                                # both empty -> root
-    (None, None, "/r.xlsx"),
-    ("/a/b/", "/c/d/", "/a/b/c/d/r.xlsx"),              # nested + stray slashes
-])
+@pytest.mark.parametrize(
+    "base,folder,expected",
+    [
+        ("/Reports", "Stock", "/Reports/Stock/r.xlsx"),
+        ("/Reports/", "Stock", "/Reports/Stock/r.xlsx"),  # trailing slash on base
+        ("/Reports", "", "/Reports/r.xlsx"),  # empty folder -> into base
+        ("/Reports", None, "/Reports/r.xlsx"),  # unset folder -> into base
+        (None, "Stock", "/Stock/r.xlsx"),  # no base -> folder at root
+        ("", "", "/r.xlsx"),  # both empty -> root
+        (None, None, "/r.xlsx"),
+        ("/a/b/", "/c/d/", "/a/b/c/d/r.xlsx"),  # nested + stray slashes
+    ],
+)
 def test_build_remote_path(base, folder, expected):
     assert C.build_remote_path(base, folder, "r.xlsx") == expected
 
@@ -250,8 +261,8 @@ def test_build_remote_path(base, folder, expected):
 @pytest.mark.feature("F-004")
 def test_currency_symbol():
     assert C.currency_symbol("EUR") == "€"
-    assert C.currency_symbol("usd") == "$"          # case-insensitive
-    assert C.currency_symbol("XYZ") == "XYZ"        # unmapped -> code itself
+    assert C.currency_symbol("usd") == "$"  # case-insensitive
+    assert C.currency_symbol("XYZ") == "XYZ"  # unmapped -> code itself
     assert C.currency_symbol("") == ""
 
 
@@ -265,4 +276,4 @@ def test_log_timestamped(capsys):
     C.log("hello world")
     out = capsys.readouterr().out
     assert "hello world" in out
-    assert out.startswith("[") and "] " in out      # [HH:MM:SS] prefix
+    assert out.startswith("[") and "] " in out  # [HH:MM:SS] prefix
