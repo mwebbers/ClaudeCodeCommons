@@ -8,6 +8,15 @@ adheres to semantic versioning.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-06-11
+
+### Changed
+- Docs only (no public-surface change): `CONTRIBUTING.md` makes lint + format an
+  explicit step in the dev loop, and `CLAUDE.md` / `CONTRIBUTING.md` add the
+  adversarial-diff *review* as the final pre-commit step — aligning this repo
+  with the family-wide dev-loop convention.
+- CI: bump the GitHub Actions group (3 updates) via Dependabot.
+
 ## [1.0.0] - 2026-06-06
 
 First stable release — the public surface is considered stable; this is the v1.0

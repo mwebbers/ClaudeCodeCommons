@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-code-commons"
-version = "1.0.0"
+version = "1.0.1"
 description = "Vendor-agnostic, standard-library-only helpers (env lookup, tolerant parsing, currency symbols, remote-path builder, run log) shared by Claude routine repos"
 license = { text = "MIT" }
 # Standard library only — a broad floor so it installs in any routine runtime,
