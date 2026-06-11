@@ -26,6 +26,10 @@ must stay covered by a test (`tests/test_scope_coverage.py` enforces it).
 - Every test is tagged `@pytest.mark.feature("F-00X")`.
 - Run `pytest` after any change.
 - After a behaviour change, add a line under `[Unreleased]` in `CHANGELOG.md`.
+- Before committing, review: adversarially re-read the full uncommitted diff for
+  real defects — edge cases, wrong assumptions, criteria the tests miss (in
+  Claude Code, `/code-review`). Style is not a finding (ruff owns style); a
+  session habit, not a CI gate.
 - **No third-party dependency, ever.** The whole point is that a routine can
   install this without pulling in heavier libraries. Anything needing `requests`,
   `openpyxl`, etc. belongs in a vendor toolkit that depends on this, not here.
